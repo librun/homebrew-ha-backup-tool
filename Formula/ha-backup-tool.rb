@@ -6,6 +6,11 @@ class HaBackupTool < Formula
   license "MIT"
   head "https://github.com/librun/ha-backup-tool.git", branch: "master"
 
+  bottle do
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "f24f246cc0cdd9261e61576de663d1a98ed9835f85152b21d6abc332a264b611"
+  end
+
   depends_on "go" => :build
 
   def install
