@@ -8,7 +8,7 @@ class HaBackupTool < Formula
 
   bottle do
     rebuild 1
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "f24f246cc0cdd9261e61576de663d1a98ed9835f85152b21d6abc332a264b611"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "bb477e138e0584914598cb0802ded785ef5ed916cb213f9f4cac6b03ed119e6d"
   end
 
   depends_on "go" => :build
