@@ -4,7 +4,6 @@ class HaBackupTool < Formula
   url "https://github.com/librun/ha-backup-tool/archive/refs/tags/v1.4.4.tar.gz"
   sha256 "a11ccb74921e354cfe4064bf4046f068d9c3508b3950c4a264c152acbf4d1dda"
   license "MIT"
-  head "https://github.com/librun/ha-backup-tool.git", branch: "master"
 
   bottle do
     rebuild 1
