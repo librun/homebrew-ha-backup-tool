@@ -6,6 +6,8 @@ class HaBackupTool < Formula
   license "MIT"
 
   bottle do
+    root_url "https://github.com/librun/homebrew-ha-backup-tool/releases/download/"
+    
     # rebuild 1
     sha256 cellar: :any_skip_relocation, arm64_sequoia: "7d362501e424487fc79e6e3d690e1f0c4642bff9bf9b450daf17ce1378c09be0"
 
