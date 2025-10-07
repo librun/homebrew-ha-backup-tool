@@ -9,7 +9,7 @@ class HaBackupTool < Formula
     root_url "https://github.com/librun/homebrew-ha-backup-tool/releases/download/"
     
     # rebuild 1
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "7d362501e424487fc79e6e3d690e1f0c4642bff9bf9b450daf17ce1378c09be0"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "a52b659719d7b84ff97200181c429ec3e812a2c07d9b4c5743f0ca8b0e2e89f6"
 
     #sha256 cellar: :any_skip_relocation, arm64: "d711e9107bed674f23538f786d0fc333afa4f0478259c71a7cc7efb4eedd522d"
     #sha256 cellar: :any_skip_relocation, x86_64: "35aaf8215ce92588e0d1703c18cf41b0697bb0099edbe5adf9595136de67a29d"
