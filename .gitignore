@@ -1,2 +1,3 @@
-*bottle.json
-*.bottle*.tar.gz
+/*bottle.json
+/*.bottle*.tar.gz
+/ha-backup-tool--*
