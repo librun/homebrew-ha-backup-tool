@@ -33,13 +33,13 @@ jobs:
 
       # Убедитесь, что ваш Tap установлен (важно для brew install)
       - name: Tap self
-        run: brew tap $GITHUB_REPOSITORY
+        run: brew tap "${GITHUB_REPOSITORY}"
 
       # Сборка bottle
       - name: Install and Bottle Formula
         run: |
-          brew install --build-bottle $GITHUB_REPOSITORY/${{ env.FORMULA_NAME }}
-          brew bottle --json $GITHUB_REPOSITORY/${{ env.FORMULA_NAME }}
+          brew install --build-bottle "${GITHUB_REPOSITORY}/${{ env.FORMULA_NAME }}"
+          brew bottle --json "${GITHUB_REPOSITORY}/${{ env.FORMULA_NAME }}"
           
       # Загрузка bottle и JSON как артефактов GitHub
       - name: Upload Bottle and JSON Artifacts
@@ -94,16 +94,16 @@ jobs:
           
         run: |
           # Создать тег, если его нет
-          git tag -a $RELEASE_TAG -m "Release $RELEASE_TAG" || true 
+          git tag -a "${RELEASE_TAG}" -m "Release $RELEASE_TAG" || true 
           
           # Создать черновик релиза (или получить существующий)
-          gh release create $RELEASE_TAG --title "Release ${{ env.FORMULA_NAME }} $RELEASE_TAG" --draft --repo $GITHUB_REPOSITORY || true
+          gh release create "$RELEASE_TAG" --title "Release ${{ env.FORMULA_NAME }} $RELEASE_TAG" --draft --repo "$GITHUB_REPOSITORY" || true
           
           # Загрузка всех файлов .tar.gz из артефактов в этот релиз
-          find artifacts -name "*.tar.gz" -exec gh release upload $RELEASE_TAG {} --clobber \;
+          find artifacts -name "*.tar.gz" -exec gh release upload "$RELEASE_TAG" {} --clobber \;
           
           # Опубликовать релиз (убрать черновик)
-          gh release edit $RELEASE_TAG --draft=false
+          gh release edit "$RELEASE_TAG" --draft=false
 
       # Финальный коммит обновленного .rb файла
       - name: Commit and Push Updated Formula
