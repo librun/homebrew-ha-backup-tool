@@ -1,0 +1,115 @@
+name: Build and Deploy Homebrew Bottles
+
+on:
+  push:
+    branches:
+      - main  # Запускать при изменении в основной ветке
+  workflow_dispatch: {} # Разрешить ручной запуск
+
+env:
+  FORMULA_NAME: ha-backup-tool
+  # Используйте grep для извлечения версии из .rb файла, если она меняется
+  FORMULA_VERSION: 1.4.4 
+  FORMULA_ROOT_URL: https://ghcr.io/v2/librun/ha-backup-tool
+
+jobs:
+  # =================================================================
+  # ШАГ 1: СБОРКА BOTTLE НА РАЗНЫХ ПЛАТФОРМАХ
+  # =================================================================
+  build_bottles:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        # Выбираем целевые системы
+        os: [macos-14, ubuntu-latest] # macOS-14 для ARM (Apple Silicon), Ubuntu для Linux
+        # Если нужна сборка для Intel Mac: добавьте 'macos-12' (или 'macos-13')
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Set up Homebrew Environment
+        uses: Homebrew/actions/setup-homebrew@master
+
+      # Убедитесь, что ваш Tap установлен (важно для brew install)
+      - name: Tap self
+        run: brew tap $GITHUB_REPOSITORY
+
+      # Сборка bottle
+      - name: Install and Bottle Formula
+        run: |
+          brew install --build-bottle $GITHUB_REPOSITORY/${{ env.FORMULA_NAME }}
+          brew bottle --json $GITHUB_REPOSITORY/${{ env.FORMULA_NAME }}
+          
+      # Загрузка bottle и JSON как артефактов GitHub
+      - name: Upload Bottle and JSON Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.os }}-bottle-artifacts
+          path: '*.tar.gz, *.json'
+
+  # =================================================================
+  # ШАГ 2: ОБЪЕДИНЕНИЕ МЕТАДАННЫХ И ДЕПЛОЙ
+  # =================================================================
+  deploy_bottles:
+    needs: build_bottles # Зависит от успешной сборки
+    runs-on: macos-14
+    if: success() # Выполнять только после успешной сборки всех платформ
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Set up Homebrew and Git
+        uses: Homebrew/actions/setup-homebrew@master
+
+      - name: Install GitHub CLI (gh)
+        run: brew install gh
+
+      # Скачивание всех bottles и JSON со всех систем
+      - name: Download all bottle artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      # Объединение JSON и обновление формулы
+      - name: Combine JSONs and Update Formula
+        run: |
+          # Перемещаем JSON-файлы в одну папку для pr-upload
+          find artifacts -name "*.json" -exec mv {} . \;
+          
+          # Загружаем файлы в GHCR (необходимо настроить GHCR root_url в формуле)
+          # Или используем команду, чтобы только обновить формулу локально:
+          brew pr-upload --dry-run
+
+        env:
+          # Требуется для brew pr-upload, даже если не загружаем в GHCR
+          HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+
+      # ----- ЭТАП ДЕПЛОЯ В GITHUB RELEASES -----
+      - name: Create or Update GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }} # Используем PAT для Releases
+          RELEASE_TAG: v${{ env.FORMULA_VERSION }}
+          
+        run: |
+          # Создать тег, если его нет
+          git tag -a $RELEASE_TAG -m "Release $RELEASE_TAG" || true 
+          
+          # Создать черновик релиза (или получить существующий)
+          gh release create $RELEASE_TAG --title "Release ${{ env.FORMULA_NAME }} $RELEASE_TAG" --draft --repo $GITHUB_REPOSITORY || true
+          
+          # Загрузка всех файлов .tar.gz из артефактов в этот релиз
+          find artifacts -name "*.tar.gz" -exec gh release upload $RELEASE_TAG {} --clobber \;
+          
+          # Опубликовать релиз (убрать черновик)
+          gh release edit $RELEASE_TAG --draft=false
+
+      # Финальный коммит обновленного .rb файла
+      - name: Commit and Push Updated Formula
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "bottle: ${{ env.FORMULA_NAME }} (all systems)"
+          branch: main
+          # Используйте GITHUB_TOKEN для аутентификации
+          token: ${{ secrets.GITHUB_TOKEN }}
