@@ -1,15 +1,15 @@
-# Librun Ha-backup-tool
+# Librun Tools
 
 ## How do I install these formulae?
 
-`brew install librun/ha-backup-tool/<formula>`
+`brew install librun/tools/<formula>`
 
-Or `brew tap librun/ha-backup-tool` and then `brew install <formula>`.
+Or `brew tap librun/tools` and then `brew install <formula>`.
 
 Or, in a `brew bundle` `Brewfile`:
 
 ```ruby
-tap "librun/ha-backup-tool"
+tap "librun/tools"
 brew "<formula>"
 ```
 
