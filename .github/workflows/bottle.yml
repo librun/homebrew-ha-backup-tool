@@ -2,8 +2,6 @@ name: Build and Deploy Homebrew Bottles
 
 on:
   push:
-    branches:
-      - main  # Запускать при изменении в основной ветке
     tags:
       - 'v*'
   workflow_dispatch: {} # Разрешить ручной запуск
@@ -13,8 +11,8 @@ env:
   # Используйте grep для извлечения версии из .rb файла, если она меняется
   FORMULA_ROOT_URL: https://ghcr.io/v2/librun/tools
 
-permissions:
-  contents: write
+# permissions:
+#   contents: write
 jobs:
   # =================================================================
   # ШАГ 1: СБОРКА BOTTLE НА РАЗНЫХ ПЛАТФОРМАХ
@@ -103,4 +101,4 @@ jobs:
         run: |
           # Используем GITHUB_TOKEN для аутентификации
           # GITHUB_ACTOR - это имя пользователя, выполняющего action (обычно github-actions[bot])
-          git push https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY.git HEAD:main
+          git push https://"${{ github.actor }}":"${{ secrets.GITHUB_TOKEN }}"@github.com/"$GITHUB_REPOSITORY".git HEAD:main
