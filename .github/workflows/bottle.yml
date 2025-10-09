@@ -82,6 +82,8 @@ jobs:
           find artifacts -name "*.json" -exec mv {} . \;
           # Перемещаем tar.gz-файлы в одну папку для pr-upload
           find artifacts -name "*.tar.gz" -exec mv {} . \;
+
+          ls -la ./
           
           # Загружаем файлы в GHCR (необходимо настроить GHCR root_url в формуле)
           # Или используем команду, чтобы только обновить формулу локально:
