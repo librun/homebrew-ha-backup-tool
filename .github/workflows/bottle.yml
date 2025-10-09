@@ -18,7 +18,7 @@ jobs:
       matrix:
         # Выбираем целевые системы
         # macOS-14 для ARM (Apple Silicon), Ubuntu для Linux
-        os: [macos-14-intel, macos-14, macos-15-intel, macos-15, macos-26, macos-26-intel, ubuntu-latest]
+        os: [macos-14, macos-15-intel, macos-15, macos-26, ubuntu-latest] # macos-14-intel, macos-26-intel, 
         # Если нужна сборка для Intel Mac: добавьте 'macos-12' (или 'macos-13')
 
     steps:
