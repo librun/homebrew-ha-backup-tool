@@ -39,7 +39,9 @@ jobs:
       - name: Install and Bottle Formula
         run: |
           brew install --build-bottle "${GITHUB_REPOSITORY}/${{ env.FORMULA_NAME }}"
-          brew bottle --json "${GITHUB_REPOSITORY}/${{ env.FORMULA_NAME }}"
+          brew bottle --json --root-url="${FORMULA_ROOT_URL}" "${GITHUB_REPOSITORY}/${{ env.FORMULA_NAME }}"
+          BOTTLE_FILES=$(find . -name "*.tar.gz" -o -name "*.json" | head -n 2)
+          echo "$BOTTLE_FILES"
           
       # Загрузка bottle и JSON как артефактов GitHub
       - name: Upload Bottle and JSON Artifacts
