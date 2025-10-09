@@ -42,6 +42,7 @@ jobs:
           brew bottle --json --root-url="${FORMULA_ROOT_URL}" "${GITHUB_REPOSITORY}/${{ env.FORMULA_NAME }}"
           BOTTLE_FILES=$(find . -name "*.tar.gz" -o -name "*.json" | head -n 2)
           echo "$BOTTLE_FILES"
+          echo "$(pwd)"
           
       # Загрузка bottle и JSON как артефактов GitHub
       - name: Upload Bottle and JSON Artifacts
