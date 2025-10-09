@@ -21,8 +21,7 @@ jobs:
     strategy:
       matrix:
         # Выбираем целевые системы
-        # os: [macos-13, macos-14, ubuntu-latest] # macOS-14 для ARM (Apple Silicon), Ubuntu для Linux
-        os: [ubuntu-latest] # TODO: временно только убунта
+        os: [macos-13, macos-14, ubuntu-latest] # macOS-14 для ARM (Apple Silicon), Ubuntu для Linux
         # Если нужна сборка для Intel Mac: добавьте 'macos-12' (или 'macos-13')
 
     steps:
@@ -82,8 +81,6 @@ jobs:
           find artifacts -name "*.json" -exec mv {} . \;
           # Перемещаем tar.gz-файлы в одну папку для pr-upload
           find artifacts -name "*.tar.gz" -exec mv {} . \;
-
-          ls -la ./
           
           # Загружаем файлы в GHCR (необходимо настроить GHCR root_url в формуле)
           # Или используем команду, чтобы только обновить формулу локально:
@@ -107,6 +104,12 @@ jobs:
           # Создать черновик релиза (или получить существующий)
           gh release create "$RELEASE_TAG" --title "Release ${{ env.FORMULA_NAME }} $RELEASE_TAG" --draft --repo "$GITHUB_REPOSITORY" || true
           
+          ls -la
+          # Перемещаем обратно
+          find artifacts -name "*.tar.gz" -exec mv {} . \;
+
+          ls -la
+
           # Загрузка всех файлов .tar.gz из артефактов в этот релиз
           find artifacts -name "*.tar.gz" -exec gh release upload "$RELEASE_TAG" {} --clobber \;
           
@@ -120,4 +123,4 @@ jobs:
           commit_message: "bottle: ${{ env.FORMULA_NAME }} (all systems)"
           branch: main
           # Используйте GITHUB_TOKEN для аутентификации
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # token: ${{ secrets.GITHUB_TOKEN }}
