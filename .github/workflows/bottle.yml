@@ -43,13 +43,23 @@ jobs:
           BOTTLE_FILES=$(find . -name "*.tar.gz" -o -name "*.json" | head -n 2)
           echo "$BOTTLE_FILES"
           echo "$(pwd)"
+          echo "::notice::Bottle and JSON should now be located in $GITHUB_WORKSPACE"
+
+      - name: "Debug: List Files"
+        run: |
+          echo "Listing files in $GITHUB_WORKSPACE:"
+          ls -l $GITHUB_WORKSPACE/
+          echo "Listing files in Formula directory:"
+          ls -l $GITHUB_WORKSPACE/Formula/
           
       # Загрузка bottle и JSON как артефактов GitHub
       - name: Upload Bottle and JSON Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.os }}-bottle-artifacts
-          path: '*.tar.gz, *.json'
+          path: |
+            ${{ github.workspace }}/*.tar.gz
+            ${{ github.workspace }}/*.json
 
   # =================================================================
   # ШАГ 2: ОБЪЕДИНЕНИЕ МЕТАДАННЫХ И ДЕПЛОЙ
