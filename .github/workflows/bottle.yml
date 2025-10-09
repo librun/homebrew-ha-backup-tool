@@ -83,17 +83,13 @@ jobs:
           find artifacts -name "*.json" -exec mv {} . \;
           # Перемещаем tar.gz-файлы в одну папку для pr-upload
           find artifacts -name "*.tar.gz" -exec mv {} . \;
-          
-          git log -n 1 
 
           # Загружаем файлы в GHCR (необходимо настроить GHCR root_url в формуле)
           # Или используем команду, чтобы только обновить формулу локально:
           brew pr-upload
 
-          git log -n 1
-
-          git push
-
+      - name: Push Updated Formula
+        run: git push --set-upstream origin main
         env:
           # Требуется для brew pr-upload, даже если не загружаем в GHCR
           HOMEBREW_GITHUB_PACKAGES_USER: "librun"
