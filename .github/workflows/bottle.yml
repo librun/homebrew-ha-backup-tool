@@ -21,7 +21,8 @@ jobs:
     strategy:
       matrix:
         # Выбираем целевые системы
-        #os: [macos-13, macos-14, ubuntu-latest] # macOS-14 для ARM (Apple Silicon), Ubuntu для Linux
+        # macOS-14 для ARM (Apple Silicon), Ubuntu для Linux
+        #os: [macos-14-intel, macos-14, macos-15-intel, macos-15, macos-26, macos-26-intel, ubuntu-latest]
         os: [ubuntu-latest]
         # Если нужна сборка для Intel Mac: добавьте 'macos-12' (или 'macos-13')
 
@@ -104,12 +105,6 @@ jobs:
           
           # Создать черновик релиза (или получить существующий)
           gh release create "$RELEASE_TAG" --title "Release ${{ env.FORMULA_NAME }} $RELEASE_TAG" --draft --repo "$GITHUB_REPOSITORY" || true
-          
-          ls -la
-          # Перемещаем обратно
-          find artifacts -name "*.tar.gz" -exec mv {} . \;
-
-          ls -la
 
           # Загрузка всех файлов .tar.gz из артефактов в этот релиз
           find artifacts -name "*.tar.gz" -exec gh release upload "$RELEASE_TAG" {} --clobber \;
