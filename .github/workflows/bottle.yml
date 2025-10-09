@@ -57,7 +57,7 @@ jobs:
   # =================================================================
   deploy_bottles:
     needs: build_bottles # Зависит от успешной сборки
-    runs-on: macos-14 # ubuntu-latest
+    runs-on: ubuntu-latest # macos-14
     if: success() # Выполнять только после успешной сборки всех платформ
 
     steps:
@@ -87,10 +87,10 @@ jobs:
           # Загружаем файлы в GHCR (необходимо настроить GHCR root_url в формуле)
           # Или используем команду, чтобы только обновить формулу локально:
           brew pr-upload
-
-      - name: Push Updated Formula
-        run: git push --set-upstream origin main
         env:
           # Требуется для brew pr-upload, даже если не загружаем в GHCR
           HOMEBREW_GITHUB_PACKAGES_USER: "librun"
           HOMEBREW_GITHUB_PACKAGES_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+
+      - name: Push Updated Formula
+        run: git push --set-upstream origin main
