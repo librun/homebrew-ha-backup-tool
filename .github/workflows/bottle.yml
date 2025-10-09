@@ -4,14 +4,17 @@ on:
   push:
     branches:
       - main  # Запускать при изменении в основной ветке
+    tags:
+      - 'v*'
   workflow_dispatch: {} # Разрешить ручной запуск
 
 env:
   FORMULA_NAME: ha-backup-tool
   # Используйте grep для извлечения версии из .rb файла, если она меняется
-  FORMULA_VERSION: 1.4.4 
   FORMULA_ROOT_URL: https://ghcr.io/v2/librun/tools
 
+permissions:
+  contents: write
 jobs:
   # =================================================================
   # ШАГ 1: СБОРКА BOTTLE НА РАЗНЫХ ПЛАТФОРМАХ
@@ -97,4 +100,7 @@ jobs:
           HOMEBREW_GITHUB_PACKAGES_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
 
       - name: Push Updated Formula
-        run: git push --set-upstream origin main
+        run: |
+          # Используем GITHUB_TOKEN для аутентификации
+          # GITHUB_ACTOR - это имя пользователя, выполняющего action (обычно github-actions[bot])
+          git push https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY.git HEAD:main
