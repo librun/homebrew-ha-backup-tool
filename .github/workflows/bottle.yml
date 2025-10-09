@@ -1,9 +1,6 @@
 name: Build and Deploy Homebrew Bottles
 
 on:
-  push:
-    tags:
-      - 'v*'
   workflow_dispatch: {} # Разрешить ручной запуск
 
 env:
@@ -11,8 +8,6 @@ env:
   # Используйте grep для извлечения версии из .rb файла, если она меняется
   FORMULA_ROOT_URL: https://ghcr.io/v2/librun/tools
 
-# permissions:
-#   contents: write
 jobs:
   # =================================================================
   # ШАГ 1: СБОРКА BOTTLE НА РАЗНЫХ ПЛАТФОРМАХ
@@ -23,8 +18,7 @@ jobs:
       matrix:
         # Выбираем целевые системы
         # macOS-14 для ARM (Apple Silicon), Ubuntu для Linux
-        #os: [macos-14-intel, macos-14, macos-15-intel, macos-15, macos-26, macos-26-intel, ubuntu-latest]
-        os: [ubuntu-latest]
+        os: [macos-14-intel, macos-14, macos-15-intel, macos-15, macos-26, macos-26-intel, ubuntu-latest]
         # Если нужна сборка для Intel Mac: добавьте 'macos-12' (или 'macos-13')
 
     steps:
@@ -87,7 +81,7 @@ jobs:
 
           # git config
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "librun by github-actions[bot]"
+          git config --global user.name "github-actions[bot]"
 
           # Загружаем файлы в GHCR (необходимо настроить GHCR root_url в формуле)
           # Или используем команду, чтобы только обновить формулу локально:
